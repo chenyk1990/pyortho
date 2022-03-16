@@ -1,3 +1,1 @@
-# dasdenoising
-# Pyortho
 # Pyortho
