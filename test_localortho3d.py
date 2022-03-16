@@ -32,12 +32,11 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-
 ## generate the synthetic data
-a1=np.zeros([300,80])
+a1=np.zeros([300,20])
 [n,m]=a1.shape
-a3=a1.copy();
-a4=a1.copy();
+a3=np.zeros([300,20])
+a4=np.zeros([300,20])
 
 k=-1;
 a=0.1;
@@ -62,28 +61,42 @@ t3=np.zeros([m],dtype='int')
 t4=np.zeros([m],dtype='int')
 for i in range(m):
   t1[i]=np.round(140);
-  t3[i]=np.round(-2*i+220);
-  t4[i]=np.round(2*i+10);
+  t3[i]=np.round(-6*i+180);
+  t4[i]=np.round(6*i+10);
   a1[t1[i]:t1[i]+k+1,i]=b1; 
   a3[t3[i]:t3[i]+k+1,i]=b1; 
   a4[t4[i]:t4[i]+k+1,i]=b1; 
 
-d0=a1[0:300,:]+a3[0:300,:]+a4[0:300,:];
+temp=a1[0:300,:]+a3[0:300,:]+a4[0:300,:];
+
+shot=np.zeros([300,20,20])
+for j in range(20):
+    a4=np.zeros([300,20]);
+    for i in range(m):
+    	t4[i]=np.round(6*i+10+3*j); 
+    	a4[t4[i]:t4[i]+k+1,i]=b1;
+  
+    	t1[i]=np.round(140-2*j);
+    	a1[t1[i]:t1[i]+k+1,i]=b1;
+
+    shot[:,:,j]=a1[0:300,:]+a3[0:300,:]+a4[0:300,:];
+
+d0=shot
 
 ## add noise
-[n1,n2]=d0.shape
+[n1,n2,n3]=d0.shape
 np.random.seed(201415)
-n=0.1*np.random.randn(n1,n2);
+n=0.1*np.random.randn(n1,n2,n3);
 dn=d0+n;
 print(np.std(dn))
 
-## plot
 fig = plt.figure(figsize=(5, 5))
-ax = fig.add_subplot(1, 4, 1)
-ax.set_xticks([])
-ax.set_yticks([])
-plt.imshow(dn,cmap='jet',clim=(-0.5, 0.5))
+# ax = fig.add_subplot(1, 4, 1)
+# ax.set_xticks([])
+# ax.set_yticks([])
+plt.imshow(dn.transpose(0,2,1).reshape(n1,n2*n3),cmap='jet',clim=(-0.5, 0.5))
 plt.show()
+
 
 
 
