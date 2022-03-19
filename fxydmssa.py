@@ -14,7 +14,7 @@ def fxydmssa(D, flow=1, fhigh=124, dt=0.004, N=1, K=1, verb=0):
 	#Copyright (C) 2013 The University of Texas at Austin
 	#Copyright (C) 2013 Yangkang Chen
 	#Mofied 2015 by Yangkang Chen
-	#Ported to python in 2022 by Yangkang Chen
+	#Ported to Python in 2022 by Yangkang Chen (Verified to be correct, the same as Matlab version)
 	#
 	#This program is free software: you can redistribute it and/or modify
 	#it under the terms of the GNU General Public License as published
@@ -33,18 +33,13 @@ def fxydmssa(D, flow=1, fhigh=124, dt=0.004, N=1, K=1, verb=0):
 	#[3] Huang, W., R. Wang, Y. Chen, H. Li, and S. Gan, 2016, Damped multichannel singular spectrum analysis for 3D random noise attenuation, Geophysics, 81, V261-V270.
 	#[4] Chen et al., 2017, Preserving the discontinuities in least-squares reverse time migration of simultaneous-source data, Geophysics, 82, S185-S196.
 	#[5] Chen et al., 2019, Obtaining free USArray data by multi-dimensional seismic reconstruction, Nature Communications, 10:4434.
-# flow=1
-# fhigh=124
-# dt=0.004
-# N=1
-# K=1
-# verb=0
-	print(flow)
-	print(fhigh)
-	print(dt)
-	print(N,K)
-	print(verb)
+
+	print('flow=',flow,'fhigh=',fhigh,'dt=',dt,'N=',N,'K=',K,'verb=',verb)
+
 	import numpy as np
+	if D.ndim==2:	#for 2D problems
+		D=np.expand_dims(D, axis=2)
+
 	[nt,nx,ny]=D.shape
 	D1=np.zeros([nt,nx,ny])
 	
@@ -54,7 +49,7 @@ def fxydmssa(D, flow=1, fhigh=124, dt=0.004, N=1, K=1, verb=0):
 	#Transform into F-X domain
 	DATA_FX=np.fft.fft(D,nf,0);
 	DATA_FX0=np.zeros([nf,nx,ny],dtype=np.complex_);
-	print('type of DATA',type(DATA_FX),type(DATA_FX0))
+
 	#First and last nts of the DFT.
 	ilow  = np.floor(flow*dt*nf)+1;
 	if ilow<1:
@@ -75,13 +70,8 @@ def fxydmssa(D, flow=1, fhigh=124, dt=0.004, N=1, K=1, verb=0):
 	
 	#main loop
 	for k in range(ilow,ihigh+1):
-# 		print(k)
-	
-		if ny==1:
-			M=P_H(DATA_FX[k-1,:,:].transpose,lx,ly); 
-		else:
-			M=P_H(DATA_FX[k-1,:,:],lx,ly); 
 		
+		M=P_H(DATA_FX[k-1,:,:],lx,ly); 
 		M=P_RD(M,N,K);
 		DATA_FX0[k-1,:,:]=P_A(M,nx,ny,lx,ly);
 		
@@ -91,12 +81,12 @@ def fxydmssa(D, flow=1, fhigh=124, dt=0.004, N=1, K=1, verb=0):
 	for k in range(int(nf/2)+2,nf+1):
 		DATA_FX0[k-1,:,:] = np.conj(DATA_FX0[nf-k+1,:,:]);
 
-	D1=D
-	
-	
 	#Back to TX (the output)
 	D1=np.real(np.fft.ifft(DATA_FX0,nf,0));
 	D1=D1[0:nt,:,:];
+	
+	if ny==1:	#for 2D problems
+		D1=np.squeeze(D1)
 	
 	return D1
 	
@@ -113,26 +103,18 @@ def P_H(din,lx,ly):
 	import scipy
 	from scipy import linalg
 	[nx,ny]=din.shape;
-	
-	
 	lxx=nx-lx+1;
 	lyy=ny-ly+1;
-
 	dout=np.zeros([lx*ly,lxx*lyy],dtype=np.complex_)
+	
 	for j in range(1,ny+1):
 		r=scipy.linalg.hankel(din[0:lx,j-1],din[lx-1:nx,j-1]);
-# 		print(j,lx)
 		if j<ly:
 			for id in range(1,j+1):
-# 				print(lx,ly,lxx,lyy)
-# 				print((j-1)*lx-(id-1)*lx,j*lx-(id-1)*lx)
-# 				print(dout[(j-1)*lx-(id-1)*lx:j*lx-(id-1)*lx,(id-1)*lxx:lxx+(id-1)*lxx].shape)
 				dout[(j-1)*lx-(id-1)*lx:j*lx-(id-1)*lx,(id-1)*lxx:lxx+(id-1)*lxx] = r;
 		else:
 			for id in range(1,ny-j+2):
-# 				print('id2',(ly-1)*lx-(id-1)*lx,ly*lx-(id-1)*lx)
-				dout[(ly-1)*lx-(id-1)*lx:ly*lx-(id-1)*lx,(j-ly)*lxx+(id-1)*lxx:(j-ly+1)*lxx+(id-1)*lxx]=r;
-	
+				dout[(ly-1)*lx-(id-1)*lx:ly*lx-(id-1)*lx,(j-ly)*lxx+(id-1)*lxx:(j-ly+1)*lxx+(id-1)*lxx]=r;	
 	return dout
 
 
@@ -143,9 +125,7 @@ def P_RD(din,N,K):
 	import numpy as np
 	[U,D,V]=scipy.linalg.svd(din)
 	for j in range(1,N+1):
-		D[j-1]=D[j-1]+(1-np.power(D[N],K)/np.power(D[j-1],K))
-# 	ans=U[:,0:N]*np.diag(D[0:N])
-# 	print(ans)
+		D[j-1]=D[j-1]*(1-np.power(D[N],K)/np.power(D[j-1],K))
 	dout=np.mat(U[:,0:N])*np.mat(np.diag(D[0:N]))*np.mat(V[0:N,:]);
 
 	return dout

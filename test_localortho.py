@@ -77,29 +77,27 @@ n=0.1*np.random.randn(n1,n2);
 dn=d0+n;
 print(np.std(dn))
 
-## plot
-fig = plt.figure(figsize=(5, 5))
-ax = fig.add_subplot(1, 4, 1)
-ax.set_xticks([])
-ax.set_yticks([])
-plt.imshow(dn,cmap='jet',clim=(-0.5, 0.5))
-plt.show()
-
 
 from fxydmssa import fxydmssa
-d1=fxydmssa(dn,0,120,0.004,3,1);	#DMSSA (when damping factor =1, there are heavy damages)
+d1=fxydmssa(dn,0,120,0.004,3,3);	#DMSSA (when damping factor =1, there are heavy damages)
 noi1=dn-d1;
 
+## compare with matlab
+import scipy
+from scipy import io
+datas = {"d0":d0,"dn": dn, "d1": d1, "noi1": noi1}
+scipy.io.savemat("datas2d.mat", datas)
 
+## plot
 fig = plt.figure(figsize=(5, 5))
 ax = fig.add_subplot(1, 3, 1)
 ax.set_xticks([])
 ax.set_yticks([])
-plt.imshow(dn,cmap='jet',clim=(-0.5, 0.5))
+plt.imshow(dn,cmap='jet',clim=(-0.2, 0.2))
 fig.add_subplot(1, 3, 2)
-plt.imshow(d1,cmap='jet',clim=(-0.5, 0.5))
+plt.imshow(d1,cmap='jet',clim=(-0.2, 0.2))
 fig.add_subplot(1, 3, 3)
-plt.imshow(noi1,cmap='jet',clim=(-0.5, 0.5))
+plt.imshow(noi1,cmap='jet',clim=(-0.2, 0.2))
 plt.show()
 
 
