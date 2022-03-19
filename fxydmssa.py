@@ -39,16 +39,22 @@ def fxydmssa(D, flow=1, fhigh=124, dt=0.004, N=1, K=1, verb=0):
 # N=1
 # K=1
 # verb=0
-
+	print(flow)
+	print(fhigh)
+	print(dt)
+	print(N,K)
+	print(verb)
+	import numpy as np
 	[nt,nx,ny]=D.shape
 	D1=np.zeros([nt,nx,ny])
 	
 	nf=2^nextpow2(nt);
+	nf=int(nf)
 	
 	#Transform into F-X domain
 	DATA_FX=np.fft.fft(D,nf,0);
-	DATA_FX0=np.zeros([nf,nx,ny]);
-
+	DATA_FX0=np.zeros([nf,nx,ny],dtype=np.complex_);
+	print('type of DATA',type(DATA_FX),type(DATA_FX0))
 	#First and last nts of the DFT.
 	ilow  = np.floor(flow*dt*nf)+1;
 	if ilow<1:
@@ -56,7 +62,7 @@ def fxydmssa(D, flow=1, fhigh=124, dt=0.004, N=1, K=1, verb=0):
 	
 	ihigh = np.floor(fhigh*dt*nf)+1;
 	if ihigh > np.floor(nf/2)+1:
-    	ihigh=np.floor(nf/2)+1
+		ihigh=np.floor(nf/2)+1
 	
 	ilow=int(ilow)
 	ihigh=int(ihigh)
@@ -69,27 +75,28 @@ def fxydmssa(D, flow=1, fhigh=124, dt=0.004, N=1, K=1, verb=0):
 	
 	#main loop
 	for k in range(ilow,ihigh+1):
-		print(k)
+# 		print(k)
 	
+		if ny==1:
+			M=P_H(DATA_FX[k-1,:,:].transpose,lx,ly); 
+		else:
+			M=P_H(DATA_FX[k-1,:,:],lx,ly); 
 		
-# 		if ny==1:
-# 			M=P_H(DATA_FX(k,:,:).transpose,lx,ly); 
-# 		else:
-# 			M=P_H(squeeze(DATA_FX(k,:,:)),lx,ly); 
-# 		
-# 		M=P_RD(M,N,K);
-# 		DATA_FX0(k,:,:)=P_A(M,nx,ny,lx,ly);
+		M=P_RD(M,N,K);
+		DATA_FX0[k-1,:,:]=P_A(M,nx,ny,lx,ly);
 		
 		if np.mod(k,5)==0 and verb==1 : 
 			print('F %d is done!\n\n'%k);
-		
+	
+	for k in range(int(nf/2)+2,nf+1):
+		DATA_FX0[k-1,:,:] = np.conj(DATA_FX0[nf-k+1,:,:]);
 
 	D1=D
 	
 	
-	
-	
-
+	#Back to TX (the output)
+	D1=np.real(np.fft.ifft(DATA_FX0,nf,0));
+	D1=D1[0:nt,:,:];
 	
 	return D1
 	
@@ -102,19 +109,28 @@ def nextpow2(N):
 
 def P_H(din,lx,ly):
 	""" forming block Hankel matrix """
+	import numpy as np
 	import scipy
 	from scipy import linalg
 	[nx,ny]=din.shape;
+	
+	
 	lxx=nx-lx+1;
 	lyy=ny-ly+1;
-	
+
+	dout=np.zeros([lx*ly,lxx*lyy],dtype=np.complex_)
 	for j in range(1,ny+1):
-		r=scipy.linalg.hankel(din[0:lx,j],din[lx:nx-1,j]);
+		r=scipy.linalg.hankel(din[0:lx,j-1],din[lx-1:nx,j-1]);
+# 		print(j,lx)
 		if j<ly:
 			for id in range(1,j+1):
+# 				print(lx,ly,lxx,lyy)
+# 				print((j-1)*lx-(id-1)*lx,j*lx-(id-1)*lx)
+# 				print(dout[(j-1)*lx-(id-1)*lx:j*lx-(id-1)*lx,(id-1)*lxx:lxx+(id-1)*lxx].shape)
 				dout[(j-1)*lx-(id-1)*lx:j*lx-(id-1)*lx,(id-1)*lxx:lxx+(id-1)*lxx] = r;
 		else:
 			for id in range(1,ny-j+2):
+# 				print('id2',(ly-1)*lx-(id-1)*lx,ly*lx-(id-1)*lx)
 				dout[(ly-1)*lx-(id-1)*lx:ly*lx-(id-1)*lx,(j-ly)*lxx+(id-1)*lxx:(j-ly+1)*lxx+(id-1)*lxx]=r;
 	
 	return dout
@@ -122,19 +138,53 @@ def P_H(din,lx,ly):
 
 def P_RD(din,N,K):
 	"""Rank reduction on the block Hankel matrix"""
-	
-	[U,D,V]=scipy.linalg.svd(din):
+	import scipy
+	from scipy import linalg
+	import numpy as np
+	[U,D,V]=scipy.linalg.svd(din)
 	for j in range(1,N+1):
-		D[j-1,j-1]=D[j-1,j-1]+(1-np.power(D[N,N],K)/(np.power(D[j-1,j-1],K));
-		
-	dout=U[:,0:N]*np.diag(D)*V[0:N,:];
+		D[j-1]=D[j-1]+(1-np.power(D[N],K)/np.power(D[j-1],K))
+# 	ans=U[:,0:N]*np.diag(D[0:N])
+# 	print(ans)
+	dout=np.mat(U[:,0:N])*np.mat(np.diag(D[0:N]))*np.mat(V[0:N,:]);
 
 	return dout
 	
+def P_A(din,nx,ny,lx,ly):
+	""" Averaging the block Hankel matrix to output the result """ 
+	import numpy as np
+	lxx=nx-lx+1;
+	lyy=ny-ly+1;
 
+	dout=np.zeros([nx,ny],dtype=np.complex_);
 	
+	for j in range(1,ny+1):
+		if j<ly:
+			for id in range(1,j+1):
+				dout[:,j-1] =dout[:,j-1]+ ave_antid(din[(j-1)*lx-(id-1)*lx:j*lx-(id-1)*lx,(id-1)*lxx:lxx+(id-1)*lxx])/j;
+		else:
+			for id in range(1,ny-j+2):
+				dout[:,j-1] =dout[:,j-1]+ ave_antid(din[(ly-1)*lx-(id-1)*lx:ly*lx-(id-1)*lx,(j-ly)*lxx+(id-1)*lxx:(j-ly+1)*lxx+(id-1)*lxx])/(ny-j+1);
 	
-	
-	
+	return dout
     
+def ave_antid(din):
+	""" averaging along antidiagonals """
+	import numpy as np
+	[n1,n2]=din.shape;
+	nout=n1+n2-1;
+	dout=np.zeros(nout,dtype=np.complex_);
+
+	for i in range(1,nout+1):
+		if i<n1:
+			for id in range(1,i+1):
+				dout[i-1]=dout[i-1] + din[i-(id-1)-1,(id-1)]/i; 
+		else:
+			for id in range(1,nout+2-i):
+				dout[i-1]=dout[i-1] + din[n1-(id-1)-1,(i-n1)+(id-1)]/(nout+1-i); 
+	return dout
+
+
+
+
     

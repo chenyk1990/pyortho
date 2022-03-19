@@ -90,11 +90,32 @@ n=0.1*np.random.randn(n1,n2,n3);
 dn=d0+n;
 print(np.std(dn))
 
+# fig = plt.figure(figsize=(5, 5))
+# # ax = fig.add_subplot(1, 4, 1)
+# # ax.set_xticks([])
+# # ax.set_yticks([])
+# plt.imshow(dn.transpose(0,2,1).reshape(n1,n2*n3),cmap='jet',clim=(-0.5, 0.5))
+# plt.show()
+
+
+from fxydmssa import fxydmssa
+d1=fxydmssa(dn,0,120,0.004,3,3);	#DMSSA (when damping factor =1, there are heavy damages)
+noi1=dn-d1;
+
+
+## plotting
 fig = plt.figure(figsize=(5, 5))
 # ax = fig.add_subplot(1, 4, 1)
 # ax.set_xticks([])
 # ax.set_yticks([])
-plt.imshow(dn.transpose(0,2,1).reshape(n1,n2*n3),cmap='jet',clim=(-0.5, 0.5))
+plt.imshow(d1.transpose(0,2,1).reshape(n1,n2*n3),cmap='jet',clim=(-0.5, 0.5))
+plt.show()
+
+fig = plt.figure(figsize=(5, 5))
+# ax = fig.add_subplot(1, 4, 1)
+# ax.set_xticks([])
+# ax.set_yticks([])
+plt.imshow(noi1.transpose(0,2,1).reshape(n1,n2*n3),cmap='jet',clim=(-0.5, 0.5))
 plt.show()
 
 
