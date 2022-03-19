@@ -86,4 +86,29 @@ plt.imshow(dn,cmap='jet',clim=(-0.5, 0.5))
 plt.show()
 
 
+from fxydmssa import fxydmssa
+d1=fxydmssa(dn,0,120,0.004,3,1);	#DMSSA (when damping factor =1, there are heavy damages)
+noi1=dn-d1;
+
+
+fig = plt.figure(figsize=(5, 5))
+ax = fig.add_subplot(1, 3, 1)
+ax.set_xticks([])
+ax.set_yticks([])
+plt.imshow(dn,cmap='jet',clim=(-0.5, 0.5))
+fig.add_subplot(1, 3, 2)
+plt.imshow(d1,cmap='jet',clim=(-0.5, 0.5))
+fig.add_subplot(1, 3, 3)
+plt.imshow(noi1,cmap='jet',clim=(-0.5, 0.5))
+plt.show()
+
+
+
+
+
+
+
+
+
+
 
