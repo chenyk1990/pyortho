@@ -31,8 +31,8 @@ def str_snr(g,f,mode=1):
 			psnr = 20.*np.log10(np.linalg.norm(g[:,:,0],'fro')/np.linalg.norm(g[:,:,0]-f[:,:,0],'fro'));   
 		else: #multi-channel
 			psnr = np.zeros(s);
-		for i in range(0,s):
-			psnr[i] = 20.*np.log10(np.linalg.norm(g[:,:,i],'fro')/np.linalg.norm(g[:,:,i]-f[:,:,i],'fro'));
+			for i in range(0,s):
+				psnr[i] = 20.*np.log10(np.linalg.norm(g[:,:,i],'fro')/np.linalg.norm(g[:,:,i]-f[:,:,i],'fro'));
 
 	else:
 		[n1,n2,n3]=g.shape;

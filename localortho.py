@@ -46,6 +46,8 @@ def localortho(signal,noise,rect,niter=50,eps=0.0,verb=1):
 	import numpy as np
 	if signal.ndim==2:	#for 2D problems
 		signal=np.expand_dims(signal, axis=2)
+	if noise.ndim==2:	#for 2D problems
+		noise=np.expand_dims(noise, axis=2)
 	[n1,n2,n3]=signal.shape
 	
 	nd=n1*n2*n3;

@@ -79,27 +79,65 @@ print(np.std(dn))
 
 
 from fxydmssa import fxydmssa
-d1=fxydmssa(dn,0,120,0.004,3,3);	#DMSSA (when damping factor =1, there are heavy damages)
+d1=fxydmssa(dn,0,120,0.004,3,1);	#DMSSA (when damping factor =1, there are heavy damages)
 noi1=dn-d1;
+
+
+## calculate local orthogonalization
+from localortho import localortho
+rect=[20,20,1];
+eps=0;
+niter=20;
+verb=1;
+[d2,noi2,low]=localortho(d1,noi1,rect,niter,eps,verb);
+
+## calculate local similarity
+from localsimi import localsimi
+simi1=localsimi(d1,noi1,[5,5,1],niter,eps,verb);
+simi2=localsimi(d2,noi2,[5,5,1],niter,eps,verb);
+
+## compare SNR
+from str_snr import str_snr
+print('SNR of initial denoising is %g'%str_snr(d0,d1));
+print('SNR of local orthogonalization is %g'%str_snr(d0,d2));
 
 ## compare with matlab
 import scipy
 from scipy import io
-datas = {"d0":d0,"dn": dn, "d1": d1, "noi1": noi1}
+datas = {"d0":d0,"dn": dn, "d1": d1, "noi1": noi1, "d2":d2, "noi2":noi2}
 scipy.io.savemat("datas2d.mat", datas)
 
-## plot
-fig = plt.figure(figsize=(5, 5))
-ax = fig.add_subplot(1, 3, 1)
-ax.set_xticks([])
-ax.set_yticks([])
-plt.imshow(dn,cmap='jet',clim=(-0.2, 0.2))
-fig.add_subplot(1, 3, 2)
-plt.imshow(d1,cmap='jet',clim=(-0.2, 0.2))
-fig.add_subplot(1, 3, 3)
-plt.imshow(noi1,cmap='jet',clim=(-0.2, 0.2))
+
+## plot results
+fig = plt.figure(figsize=(10, 5))
+ax = fig.add_subplot(3,2,1)
+# ax.set_xticks([])
+# ax.set_yticks([])
+plt.imshow(dn,cmap='jet',clim=(-0.2, 0.2),aspect=0.2)
+plt.title('Noisy data');
+fig.add_subplot(3,2,3)
+plt.imshow(d1,cmap='jet',clim=(-0.2, 0.2),aspect=0.2)
+plt.title('Initial denoising');
+fig.add_subplot(3,2,4)
+plt.imshow(noi1,cmap='jet',clim=(-0.2, 0.2),aspect=0.2)
+plt.title('Initial denoising');
+plt.imshow(dn,cmap='jet',clim=(-0.2, 0.2),aspect=0.2)
+fig.add_subplot(3,2,5)
+plt.imshow(d2,cmap='jet',clim=(-0.2, 0.2),aspect=0.2)
+plt.title('Local orthogonalization');
+fig.add_subplot(3,2,6)
+plt.imshow(noi2,cmap='jet',clim=(-0.2, 0.2),aspect=0.2)
+plt.title('Local orthogonalization');
 plt.show()
 
+fig = plt.figure(figsize=(5, 6))
+fig.add_subplot(2, 1, 1)
+plt.imshow(simi1,cmap='jet',clim=(0,1),aspect=0.2)
+plt.title('Local similarity: Initial denoising');
+fig.add_subplot(2, 1, 2)
+plt.imshow(simi2,cmap='jet',clim=(0,1),aspect=0.2)
+plt.title('Local similarity: Local orthogonalization');
+plt.show()
 
 
 

@@ -95,12 +95,6 @@ d1=fxydmssa(dn,0,120,0.004,3,1);	#DMSSA (when damping factor =1, there are heavy
 # d1=d0*0.9
 noi1=dn-d1;
 
-from str_snr import str_snr
-print('SNR of initial denoising is %g'%str_snr(d0,d1,2));
-
-
-from localortho import localortho
-
 ## prepare paramters for ortho
 rect=[10,10,10];
 eps=0;
@@ -108,6 +102,7 @@ niter=20;
 verb=1;
 
 ## calculate local orthogonalization
+from localortho import localortho
 [d2,noi2,low]=localortho(d1,noi1,rect,niter,eps,verb);
 
 ## compare with matlab
@@ -122,18 +117,28 @@ from localsimi import localsimi
 simi1=localsimi(d1,noi1,[5,5,5],niter,eps,verb);
 simi2=localsimi(d2,noi2,[5,5,5],niter,eps,verb);
 
+## compare SNR
+from str_snr import str_snr
+print('SNR of initial denoising is %g'%str_snr(d0,d1,2));
+print('SNR of local orthogonalization is %g'%str_snr(d0,d2,2));
+
 ## plotting
 fig = plt.figure(figsize=(5, 6))
 fig.add_subplot(3, 2, 1)
 plt.imshow(dn.transpose(0,2,1).reshape(n1,n2*n3),cmap='jet',clim=(-0.2, 0.2))
+plt.title('Noisy data');
 fig.add_subplot(3, 2, 3)
 plt.imshow(d1.reshape(n1,n2*n3,order='F'),cmap='jet',clim=(-0.2, 0.2))
+plt.title('Initial denoising');
 fig.add_subplot(3, 2, 4)
 plt.imshow(noi1.transpose(0,2,1).reshape(n1,n2*n3),cmap='jet',clim=(-0.2, 0.2))
+plt.title('Initial denoising');
 fig.add_subplot(3, 2, 5)
 plt.imshow(d2.reshape(n1,n2*n3,order='F'),cmap='jet',clim=(-0.2, 0.2))
+plt.title('Local orthogonalization');
 fig.add_subplot(3, 2, 6)
 plt.imshow(noi2.transpose(0,2,1).reshape(n1,n2*n3),cmap='jet',clim=(-0.2, 0.2))
+plt.title('Local orthogonalization');
 plt.show()
 
 fig = plt.figure(figsize=(5, 6))
@@ -145,7 +150,5 @@ plt.imshow(simi2.reshape(n1,n2*n3,order='F'),cmap='jet',clim=(0,1))
 plt.title('Local similarity: Local orthogonalization');
 plt.show()
 
-from str_snr import str_snr
-print('SNR of initial denoising is %g'%str_snr(d0,d1,2));
-print('SNR of local orthogonalization is %g'%str_snr(d0,d2,2));
+
 
