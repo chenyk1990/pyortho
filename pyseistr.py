@@ -2,7 +2,7 @@ def str_divne(num, den, Niter, rect, ndat, eps_dv, eps_cg, tol_cg,verb):
 	#str_divne: N-dimensional smooth division rat=num/den		  
 	#This is a subroutine from the seistr package (https://github.com/chenyk1990/seistr)
 	#
-	#Ported to Python by Yangkang Chen, 2022
+	#Ported to Python by Yangkang Chen, 2022, verified to be exactly the same as the Matlab version
 	#
 	#INPUT
 	#num: numerator
@@ -34,7 +34,7 @@ def str_divne(num, den, Niter, rect, ndat, eps_dv, eps_cg, tol_cg,verb):
 			norm = 1.0 / np.hypot(den[i], eps_dv);
 			num[i] = num[i] * norm;
 			den[i] = den[i] * norm;
-	norm=sum(den*den);
+	norm=np.sum(den*den);
 	if norm == 0.0:
 		rat=np.zeros(n);
 		return rat
@@ -82,13 +82,7 @@ def str_weight_lop(din,par,adj,add):
 			d=par['d'];
 		else:
 			d=np.zeros(par['nd']);
-# 	print(adj)
-# 	print(add)
-# 	print(nm,nd)
-# 	print('m',m)
-# 	print('d',d)
 	m,d  = str_adjnull( adj,add,nm,nd,m,d );
-
 	if adj==1:
 		m=m+d*w; #dot product
 	else: #forward
@@ -156,13 +150,12 @@ def str_trianglen_lop(din,par,adj,add ):
 	else:
 		tmp=m;
 
-
 	for i in range(0,ndim):
 		if tr[i] != 'NULL':
 			for j in range(0,int(nd/ndat[i])):
 				i0=str_first_index(i,j,ndim,ndat,s);
 				[tmp,tr[i]]=str_smooth2(tr[i],i0,s[i],0,tmp);
-
+	
 	if adj==1:
 		m=m+tmp;
 	else:
@@ -234,8 +227,6 @@ def triple2( o, d, nx, nb, x, tmp, box, wt ):
 		tmp[1:]	 = cblas_saxpy(nx,  +wt,x[o:],d,tmp[1:],   1); 	#y += a*x
 		tmp[2*nb:]  = cblas_saxpy(nx,  -wt,x[o:],d,tmp[2*nb:],1);
 	else:
-# 		print(type(o))
-# 		print(o)
 		tmp		 = cblas_saxpy(nx,  -wt,x[o:],d,tmp,	   1); 	#y += a*x
 		tmp[nb:]	= cblas_saxpy(nx,2.*wt,x[o:],d,tmp[nb:],  1);
 		tmp[2*nb:]  = cblas_saxpy(nx,  -wt,x[o:],d,tmp[2*nb:],1);
@@ -400,7 +391,7 @@ def str_conjgrad(opP,opL,opS, p, x, dat, eps_cg, tol_cg, N,ifhasp0,par_P,par_L,p
 	dg=0;
 	g0=0;
 	gnp=0;
-	r0=sum(r*r);   #nr*1
+	r0=np.sum(r*r);   #nr*1
 
 	for n in range(1,N+1):
 		gp=eps_cg*p; #np*1
@@ -417,7 +408,8 @@ def str_conjgrad(opP,opL,opS, p, x, dat, eps_cg, tol_cg, N,ifhasp0,par_P,par_L,p
 	
 		par_S['m']=gp;#initialize model
 		gp=opS(gx,par_S,1,1);#adjoint,adding
-		gx=opS(gp,par_S,0,0);#forward,adding
+		gx=opS(gp.copy(),par_S,0,0);#forward,adding
+		#The above gp.copy() instead of gp is the most striking bug that has been found because otherwise gp was modified during the shaping operation (opS) (Mar, 28, 2022)
 		
 		if opP!='NULL':
 			d=opL(gx,par_P,0,0);#forward
@@ -425,9 +417,8 @@ def str_conjgrad(opP,opL,opS, p, x, dat, eps_cg, tol_cg, N,ifhasp0,par_P,par_L,p
 		else:
 			gr=opL(gx,par_L,0,0);#forward
 
-	
-		gn = sum(gp*gp); #np*1
-	
+		gn = np.sum(gp*gp); #np*1
+
 		if n==1:
 			g0=gn;
 			sp=gp; #np*1
@@ -451,12 +442,11 @@ def str_conjgrad(opP,opL,opS, p, x, dat, eps_cg, tol_cg, N,ifhasp0,par_P,par_L,p
 			t=sr;sr=gr;gr=t;
 
 	 
-		beta=sum(sr*sr)+eps_cg*(sum(sp*sp)-sum(sx*sx));
+		beta=np.sum(sr*sr)+eps_cg*(np.sum(sp*sp)-np.sum(sx*sx));
 		
 		if verb:
-			print('iteration: %d, res: %g !'%(n,sum(r* r) / r0));  
+			print('iteration: %d, res: %g !'%(n,np.sum(r* r) / r0));  
 
-		
 		alpha=-gn/beta;
 	
 		p=alpha*sp+p;
@@ -466,9 +456,3 @@ def str_conjgrad(opP,opL,opS, p, x, dat, eps_cg, tol_cg, N,ifhasp0,par_P,par_L,p
 		gnp=gn;
 
 	return x
-
-
-
-
-
-	
