@@ -13,7 +13,7 @@ def fxydmssa(D, flow=1, fhigh=124, dt=0.004, N=1, K=1, verb=0):
 	#
 	#Copyright (C) 2013 The University of Texas at Austin
 	#Copyright (C) 2013 Yangkang Chen
-	#Mofied 2015 by Yangkang Chen
+	#Modified 2015 by Yangkang Chen
 	#Ported to Python in 2022 by Yangkang Chen (Verified to be correct, the same as Matlab version)
 	#
 	#This program is free software: you can redistribute it and/or modify
