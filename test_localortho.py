@@ -90,12 +90,16 @@ eps=0;
 niter=20;
 verb=1;
 [d2,noi2,low]=localortho(d1,noi1,rect,niter,eps,verb);
-
+## Use Python 3 (Windows)
+d2 = np.squeeze(d2)  
+noi2 = np.squeeze(noi2)
 ## calculate local similarity
 from localsimi import localsimi
 simi1=localsimi(d1,noi1,[5,5,1],niter,eps,verb);
 simi2=localsimi(d2,noi2,[5,5,1],niter,eps,verb);
-
+## Use Python 3 (Windows)
+simi1 = np.squeeze(simi1)  
+simi2 = np.squeeze(simi2)
 ## compare SNR
 from str_snr import str_snr
 print('SNR of initial denoising is %g'%str_snr(d0,d1));
