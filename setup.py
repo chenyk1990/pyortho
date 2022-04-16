@@ -19,9 +19,9 @@ def read(*names, **kwargs):
 
 setup(
     name="pyortho",
-    version="0.0.2",
+    version="0.0.3",
     license='GNU General Public License, Version 3 (GPLv3)',
-    description="A python package for the denoising and structural filtering of multi-channel seismic data",
+    description="A python package for local signal-and-noise orthogonalization and local similarity calculation",
     long_description=long_description,
     author="pyortho developing team",
     author_email="chenyk2016@gmail.com",
