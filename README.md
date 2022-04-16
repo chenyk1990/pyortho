@@ -3,7 +3,7 @@
 
 ## Description
 
-**pyortho** is a python package for local signal-and-noise orthogonalization and local similarity calculation (for detecting signal leakage) introduced in Chen and Fomel, 2015, Random noise attenuation using local signal-and-noise orthogonalization, Geophysics, WD1-WD9.
+**Pyortho** is a python package for local signal-and-noise orthogonalization and local similarity calculation (for detecting signal leakage) introduced in Chen and Fomel, 2015, Random noise attenuation using local signal-and-noise orthogonalization, Geophysics, WD1-WD9.
 
 ## Reference
 
@@ -23,12 +23,12 @@ BibTeX:
 	}
 
 -----------
-## copyright
+## Copyright
     Initial version: Yangkang Chen (chenyk2016@gmail.com), 2021-2022
 	Later version: pyortho developing team, 2022-present
 -----------
 
-## license:
+## License:
     GNU General Public License, Version 3
     (http://www.gnu.org/copyleft/gpl.html)   
 
@@ -49,7 +49,9 @@ pip install pyortho
 
 ## Dependence Packages:
 scipy 
+
 numpy 
+
 matplotlib
 
 -----------
