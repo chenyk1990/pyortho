@@ -28,10 +28,12 @@ def localsimi(d1,d2,rect,niter=50,eps=0.0,verb=1):
 	#             2. Local seismic attributes, Fomel, Geophysics, 2007
 	#
 	# DEMO
-	# test_localortho.py
-
+	# demos/test_pyortho_localortho2d.py
+	# demos/test_pyortho_localortho3d.py
+	
 	import numpy as np
-
+	from .divne import divne
+	
 	if d1.ndim==2:
 		d1=np.expand_dims(d1, axis=2)
 	if d2.ndim==2:
@@ -43,9 +45,9 @@ def localsimi(d1,d2,rect,niter=50,eps=0.0,verb=1):
 	eps_dv=eps;
 	eps_cg=0.1; 
 	tol_cg=0.000001;
-	from pyseistr import str_divne
-	ratio = str_divne(d2, d1, niter, rect, ndat, eps_dv, eps_cg, tol_cg,verb);
-	ratio1 = str_divne(d1, d2, niter, rect, ndat, eps_dv, eps_cg, tol_cg,verb);
+
+	ratio = divne(d2, d1, niter, rect, ndat, eps_dv, eps_cg, tol_cg,verb);
+	ratio1 = divne(d1, d2, niter, rect, ndat, eps_dv, eps_cg, tol_cg,verb);
 	simi=np.sqrt(np.abs(ratio*ratio1));
 	return simi
 

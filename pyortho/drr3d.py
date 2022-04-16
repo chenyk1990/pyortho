@@ -1,5 +1,8 @@
-def fxydmssa(D, flow=1, fhigh=124, dt=0.004, N=1, K=1, verb=0):
-	#FXYDMSSA: F-XY domain damped multichannel singular spectrum analysis (DMSSA)
+import numpy as np
+import scipy
+from scipy import linalg
+def drr3d(D, flow=1, fhigh=124, dt=0.004, N=1, K=1, verb=0):
+	#DRR3D: 3D rank-reduction method for denoising (also known as FXYDMSSA)
 	#
 	#IN   D:   	 intput 3D data (ndarray)
 	#     flow:   processing frequency range (lower)
@@ -33,10 +36,13 @@ def fxydmssa(D, flow=1, fhigh=124, dt=0.004, N=1, K=1, verb=0):
 	#[3] Huang, W., R. Wang, Y. Chen, H. Li, and S. Gan, 2016, Damped multichannel singular spectrum analysis for 3D random noise attenuation, Geophysics, 81, V261-V270.
 	#[4] Chen et al., 2017, Preserving the discontinuities in least-squares reverse time migration of simultaneous-source data, Geophysics, 82, S185-S196.
 	#[5] Chen et al., 2019, Obtaining free USArray data by multi-dimensional seismic reconstruction, Nature Communications, 10:4434.
-
+	#
+	# DEMO
+	# demos/test_pyortho_localortho2d.py
+	# demos/test_pyortho_localortho3d.py
+	
 	print('flow=',flow,'fhigh=',fhigh,'dt=',dt,'N=',N,'K=',K,'verb=',verb)
 
-	import numpy as np
 	if D.ndim==2:	#for 2D problems
 		D=np.expand_dims(D, axis=2)
 
@@ -99,9 +105,6 @@ def nextpow2(N):
 
 def P_H(din,lx,ly):
 	""" forming block Hankel matrix """
-	import numpy as np
-	import scipy
-	from scipy import linalg
 	[nx,ny]=din.shape;
 	lxx=nx-lx+1;
 	lyy=ny-ly+1;
@@ -120,9 +123,6 @@ def P_H(din,lx,ly):
 
 def P_RD(din,N,K):
 	"""Rank reduction on the block Hankel matrix"""
-	import scipy
-	from scipy import linalg
-	import numpy as np
 	[U,D,V]=scipy.linalg.svd(din)
 	for j in range(1,N+1):
 		D[j-1]=D[j-1]*(1-np.power(D[N],K)/np.power(D[j-1],K))
@@ -132,7 +132,6 @@ def P_RD(din,N,K):
 	
 def P_A(din,nx,ny,lx,ly):
 	""" Averaging the block Hankel matrix to output the result """ 
-	import numpy as np
 	lxx=nx-lx+1;
 	lyy=ny-ly+1;
 
@@ -150,7 +149,6 @@ def P_A(din,nx,ny,lx,ly):
     
 def ave_antid(din):
 	""" averaging along antidiagonals """
-	import numpy as np
 	[n1,n2]=din.shape;
 	nout=n1+n2-1;
 	dout=np.zeros(nout,dtype=np.complex_);

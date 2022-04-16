@@ -1,6 +1,5 @@
-def str_snr(g,f,mode=1):
-	#str_snr: calculate the SNR
-	#This is a subroutine from the seistr package (https://github.com/chenyk1990/pyseistr)
+def snr(g,f,mode=1):
+	#snr: calculate the SNR
 	#
 	#The definition of SNR can be found in 
 	#Chen and Fomel, 2015, Random noise attenuation using local

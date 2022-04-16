@@ -40,10 +40,14 @@ def localortho(signal,noise,rect,niter=50,eps=0.0,verb=1):
 	#             2020, Geophysics
 	#             7. Local primary-and-multiple orthogonalization for leaked internal multiple crosstalk estimation and attenuation on full-wavefield migrated images
 	#             Zhang, et al., 2020, Geophysics
-	#Example:
-	#test_localortho.m
+	#
+	# DEMO
+	# demos/test_pyortho_localortho2d.py
+	# demos/test_pyortho_localortho3d.py
 
 	import numpy as np
+	from .divne import divne
+	
 	if signal.ndim==2:	#for 2D problems
 		signal=np.expand_dims(signal, axis=2)
 	if noise.ndim==2:	#for 2D problems
@@ -56,11 +60,12 @@ def localortho(signal,noise,rect,niter=50,eps=0.0,verb=1):
 	eps_dv=eps;
 	eps_cg=0.1; 
 	tol_cg=0.000001;
-	from pyseistr import str_divne
-	ratio = str_divne(noise, signal, niter, rect, ndat, eps_dv, eps_cg, tol_cg,verb);
+	ratio = divne(noise, signal, niter, rect, ndat, eps_dv, eps_cg, tol_cg,verb);
 	
 	signal2=signal+ratio*signal;
 	noise2=noise-ratio*signal;
 	low=ratio;
 
 	return signal2,noise2,low
+	
+	

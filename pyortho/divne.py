@@ -1,8 +1,9 @@
-def str_divne(num, den, Niter, rect, ndat, eps_dv, eps_cg, tol_cg,verb):
-	#str_divne: N-dimensional smooth division rat=num/den		  
+import numpy as np
+def divne(num, den, Niter, rect, ndat, eps_dv, eps_cg, tol_cg,verb):
+	#divne: N-dimensional smooth division rat=num/den		  
 	#This is a subroutine from the seistr package (https://github.com/chenyk1990/seistr)
 	#
-	#Ported to Python by Yangkang Chen, 2022, verified to be exactly the same as the Matlab version
+	#by Yangkang Chen, 2022, verified to be exactly the same as the Matlab version
 	#
 	#INPUT
 	#num: numerator
@@ -20,7 +21,6 @@ def str_divne(num, den, Niter, rect, ndat, eps_dv, eps_cg, tol_cg,verb):
 	# 
 	#Reference
 	#H. Wang, Y. Chen, O. Saad, W. Chen, Y. Oboue, L. Yang, S. Fomel, and Y. Chen, 2021, A Matlab code package for 2D/3D local slope estimation and structural filtering: in press.
-	import numpy as np
 	n=num.size
 	
 	ifhasp0=0
@@ -46,14 +46,14 @@ def str_divne(num, den, Niter, rect, ndat, eps_dv, eps_cg, tol_cg,verb):
 	par_S={'nm':n,'nd':n,'nbox':rect,'ndat':ndat,'ndim':3}
 	
 	
-	rat = str_conjgrad('NULL', str_weight_lop, str_trianglen_lop, p, 'NULL', num, eps_cg, tol_cg, Niter,ifhasp0,[],par_L,par_S,verb);
+	rat = conjgrad('NULL', weight_lop, trianglen_lop, p, 'NULL', num, eps_cg, tol_cg, Niter,ifhasp0,[],par_L,par_S,verb);
 	rat=rat.reshape(ndat[0],ndat[1],ndat[2],order='F')
 
 	return rat
 
 
-def str_weight_lop(din,par,adj,add):
-	# str_weight_lop: Weighting operator (verified)
+def weight_lop(din,par,adj,add):
+	# weight_lop: Weighting operator (verified)
 	# 
 	# Ported to Python by Yangkang Chen, 2022
 	# 
@@ -65,7 +65,6 @@ def str_weight_lop(din,par,adj,add):
 	# OUTPUT
 	# dout: data/model
 	# 
-	import numpy as np
 	nm=par['nm'];
 	nd=par['nd'];
 	w=par['w'];
@@ -82,7 +81,7 @@ def str_weight_lop(din,par,adj,add):
 			d=par['d'];
 		else:
 			d=np.zeros(par['nd']);
-	m,d  = str_adjnull( adj,add,nm,nd,m,d );
+	m,d  = adjnull( adj,add,nm,nd,m,d );
 	if adj==1:
 		m=m+d*w; #dot product
 	else: #forward
@@ -96,10 +95,8 @@ def str_weight_lop(din,par,adj,add):
 
 	return dout
 	
-
-
-def str_trianglen_lop(din,par,adj,add ):
-	# str_trianglen_lop: N-D triangle smoothing operator (verified)
+def trianglen_lop(din,par,adj,add ):
+	# trianglen_lop: N-D triangle smoothing operator (verified)
 	# 
 	# Ported to Python by Yangkang Chen, 2022
 	# 
@@ -110,7 +107,6 @@ def str_trianglen_lop(din,par,adj,add ):
 	# add: add flag
 	# OUTPUT
 	# dout: data/model
-	import numpy as np
 	if adj==1:
 		d=din;
 		if 'm' in par and add==1:
@@ -131,7 +127,7 @@ def str_trianglen_lop(din,par,adj,add ):
 	nbox=par['nbox']; #vector[ndim]
 	ndat=par['ndat']; #vector[ndim]
 
-	[ m,d ] = str_adjnull( adj,add,nm,nd,m,d );
+	[ m,d ] = adjnull( adj,add,nm,nd,m,d );
 
 	tr = [];
 
@@ -153,8 +149,8 @@ def str_trianglen_lop(din,par,adj,add ):
 	for i in range(0,ndim):
 		if tr[i] != 'NULL':
 			for j in range(0,int(nd/ndat[i])):
-				i0=str_first_index(i,j,ndim,ndat,s);
-				[tmp,tr[i]]=str_smooth2(tr[i],i0,s[i],0,tmp);
+				i0=first_index(i,j,ndim,ndat,s);
+				[tmp,tr[i]]=smooth2(tr[i],i0,s[i],0,tmp);
 	
 	if adj==1:
 		m=m+tmp;
@@ -169,8 +165,8 @@ def str_trianglen_lop(din,par,adj,add ):
 	return dout
 
 
-def str_first_index( i, j, dim, n, s ):
-	#str_first_index: Find first index for multidimensional transforms
+def first_index( i, j, dim, n, s ):
+	#first_index: Find first index for multidimensional transforms
 	#Ported to Python by Yangkang Chen, 2022
 	#
 	#INPUT
@@ -182,7 +178,6 @@ def str_first_index( i, j, dim, n, s ):
 	#OUTPUT
 	#i0:   first index
 
-	import numpy as np
 	n123 = 1;
 	i0 = 0;
 	for k in range(0,dim):
@@ -195,8 +190,8 @@ def str_first_index( i, j, dim, n, s ):
 	return int(i0)
 
 
-def str_smooth2( tr, o, d, der, x):
-	#str_smooth2: apply triangle smoothing
+def smooth2( tr, o, d, der, x):
+	#smooth2: apply triangle smoothing
 	#
 	#Ported to Python by Yangkang Chen, 2022
 	#
@@ -305,7 +300,7 @@ def fold2(o, d, nx, nb, np, x, tmp):
 				x[o+(nx-1-i)*d] = x[o+(nx-1-i)*d] + tmp[j-1-i];
 	return x
 
-def str_adjnull( adj,add,nm,nd,m,d ):
+def adjnull( adj,add,nm,nd,m,d ):
 	#Claerbout-style adjoint zeroing Zeros out the output (unless add is true). 
 	#Useful first step for and linear operator.
 	# 
@@ -323,7 +318,7 @@ def str_adjnull( adj,add,nm,nd,m,d ):
 	#  along with this program; if not, write to the Free Software
 	#  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 	#adj : adjoint flag; add: addition flag; nm: size of m; nd: size of d
-	import numpy as np
+
 	if add:
 		return m,d
 
@@ -339,10 +334,10 @@ def str_adjnull( adj,add,nm,nd,m,d ):
 	return m,d
 
 
-def str_conjgrad(opP,opL,opS, p, x, dat, eps_cg, tol_cg, N,ifhasp0,par_P,par_L,par_S,verb):
-	#str_conjgrad: conjugate gradient with shaping
+def conjgrad(opP,opL,opS, p, x, dat, eps_cg, tol_cg, N,ifhasp0,par_P,par_L,par_S,verb):
+	#conjgrad: conjugate gradient with shaping
 	#
-	#Ported to Python by Yangkang Chen, 2022
+	#by Yangkang Chen, 2022
 	#
 	#Modified by Yangkang Chen, Nov, 09, 2019 (fix the "adding" for each oper)
 	#
@@ -363,7 +358,7 @@ def str_conjgrad(opP,opL,opS, p, x, dat, eps_cg, tol_cg, N,ifhasp0,par_P,par_L,p
 	#OUPUT
 	#x: estimated model
 	#
-	import numpy as np
+
 	nnp=p.size;
 	nx=par_L['nm'];	#model size
 	nd=par_L['nd'];	#data size
@@ -456,3 +451,9 @@ def str_conjgrad(opP,opL,opS, p, x, dat, eps_cg, tol_cg, N,ifhasp0,par_P,par_L,p
 		gnp=gn;
 
 	return x
+
+
+
+
+
+	
