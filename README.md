@@ -48,12 +48,30 @@ pip install pyortho
 
 -----------
 
+## Examples:
+The "demo" directory contains all runable scripts to demonstrate different applications of pyortho. 
+
+-----------
+
 ## Dependence Packages:
 * scipy 
 
 * numpy 
 
 * matplotlib
+
+-----------
+
+## Development:
+The development team welcomes voluntary contributions from any open-source enthusiast.  
+
+If you want to make contribution to this project, feel free to contact the development team. 
+
+-----------
+## Contact:
+Regarding any questions, bugs, developments, collaborations, please contact  
+    Yangkang Chen
+    chenyk2016@gmail.com
 
 -----------
 
