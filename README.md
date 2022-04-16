@@ -48,11 +48,11 @@ pip install pyortho
 -----------
 
 ## Dependence Packages:
-scipy 
+* scipy 
 
-numpy 
+* numpy 
 
-matplotlib
+* matplotlib
 
 -----------
 
