@@ -7,9 +7,6 @@
     GNU General Public License, Version 3
     (http://www.gnu.org/copyleft/gpl.html)
 """
-from __future__ import (absolute_import, division, print_function,
-                        unicode_literals)
-
 # import collections
 import logging
 
@@ -28,7 +25,7 @@ class PyorthoWarning(UserWarning):
     """
     pass
 
-__version__ = "0.0.1"
+__version__ = "0.0.3"
 
 # Setup the logger.
 logger = logging.getLogger("Pyortho")
