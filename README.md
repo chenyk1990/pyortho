@@ -28,13 +28,13 @@ BibTeX:
 	Later version: pyortho developing team, 2022-present
 -----------
 
-## License:
+## License
     GNU General Public License, Version 3
     (http://www.gnu.org/copyleft/gpl.html)   
 
 -----------
 
-## Install:
+## Install
 
 git clone https://github.com/chenyk1990/pyortho
 
@@ -48,12 +48,12 @@ pip install pyortho
 
 -----------
 
-## Examples:
+## Examples
 The "demo" directory contains all runable scripts to demonstrate different applications of pyortho. 
 
 -----------
 
-## Dependence Packages:
+## Dependence Packages
 * scipy 
 
 * numpy 
@@ -62,13 +62,13 @@ The "demo" directory contains all runable scripts to demonstrate different appli
 
 -----------
 
-## Development:
+## Development
 The development team welcomes voluntary contributions from any open-source enthusiast.  
 
 If you want to make contribution to this project, feel free to contact the development team. 
 
 -----------
-## Contact:
+## Contact
 Regarding any questions, bugs, developments, collaborations, please contact  
     Yangkang Chen
     chenyk2016@gmail.com
