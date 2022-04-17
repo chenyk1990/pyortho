@@ -3,11 +3,10 @@
 
 ## Description
 
-**Pyortho** is a python package for local signal-and-noise orthogonalization and local similarity calculation. The local orthogonalization method is a fundamental seismic data analysis algorithm and has a wide range of applications. More examples will be continuously updated. 
+    **Pyortho** is a python package for local signal-and-noise orthogonalization and local similarity calculation. The local orthogonalization method is a fundamental seismic data analysis algorithm and has a wide range of applications. More examples will be continuously updated. 
 
 ## Reference
-
-Chen, Yangkang, and Sergey Fomel. "Random noise attenuation using local signal-and-noise orthogonalization." Geophysics 80, no. 6 (2015): WD1-WD9.
+    Chen, Yangkang, and Sergey Fomel. "Random noise attenuation using local signal-and-noise orthogonalization." Geophysics 80, no. 6 (2015): WD1-WD9.
 
 BibTeX:
 
@@ -35,16 +34,14 @@ BibTeX:
 -----------
 
 ## Install
+Using the latest version
 
-git clone https://github.com/chenyk1990/pyortho
+    git clone https://github.com/chenyk1990/pyortho
+    cd pyortho
+    pip install -v -e .
+or using Pypi
 
-cd pyortho
-
-pip install -v -e .
-
-or
-
-pip install pyortho
+    pip install pyortho
 
 -----------
 ## Examples
@@ -53,9 +50,7 @@ pip install pyortho
 -----------
 ## Dependence Packages
 * scipy 
-
 * numpy 
-
 * matplotlib
 
 -----------
