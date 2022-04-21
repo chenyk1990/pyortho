@@ -115,7 +115,6 @@ plt.title('Initial denoising');
 fig.add_subplot(3,2,4)
 plt.imshow(noi1,cmap='jet',clim=(-0.2, 0.2),aspect=0.2)
 plt.title('Initial denoising');
-plt.imshow(dn,cmap='jet',clim=(-0.2, 0.2),aspect=0.2)
 fig.add_subplot(3,2,5)
 plt.imshow(d2,cmap='jet',clim=(-0.2, 0.2),aspect=0.2)
 plt.title('Local orthogonalization');
