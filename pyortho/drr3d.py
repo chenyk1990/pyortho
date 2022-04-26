@@ -49,7 +49,7 @@ def drr3d(D, flow=1, fhigh=124, dt=0.004, N=1, K=1, verb=0):
 	[nt,nx,ny]=D.shape
 	D1=np.zeros([nt,nx,ny])
 	
-	nf=2^nextpow2(nt);
+	nf=nextpow2(nt);
 	nf=int(nf)
 	
 	#Transform into F-X domain
