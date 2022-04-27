@@ -20,7 +20,7 @@ def divne(num, den, Niter, rect, ndat, eps_dv, eps_cg, tol_cg,verb):
 	#rat: output ratio
 	# 
 	#Reference
-	#H. Wang, Y. Chen, O. Saad, W. Chen, Y. Oboue, L. Yang, S. Fomel, and Y. Chen, 2022, A Matlab code package for 2D/3D local slope estimation and structural filtering. Geophysics, doi: 10.1190/geo2021-0266.1.
+	#H. Wang, Y. Chen, O. Saad, W. Chen, Y. Oboue, L. Yang, S. Fomel, and Y. Chen, 2022, A Matlab code package for 2D/3D local slope estimation and structural filtering. Geophysics, 87(3), F1–F14, doi: 10.1190/geo2021-0266.1. 
 	n=num.size
 	
 	ifhasp0=0
@@ -46,7 +46,7 @@ def divne(num, den, Niter, rect, ndat, eps_dv, eps_cg, tol_cg,verb):
 	par_S={'nm':n,'nd':n,'nbox':rect,'ndat':ndat,'ndim':3}
 	
 	
-	rat = conjgrad('NULL', weight_lop, trianglen_lop, p, 'NULL', num, eps_cg, tol_cg, Niter,ifhasp0,[],par_L,par_S,verb);
+	rat = conjgrad(None, weight_lop, trianglen_lop, p, None, num, eps_cg, tol_cg, Niter,ifhasp0,[],par_L,par_S,verb);
 	rat=rat.reshape(ndat[0],ndat[1],ndat[2],order='F')
 
 	return rat
@@ -363,7 +363,7 @@ def conjgrad(opP,opL,opS, p, x, dat, eps_cg, tol_cg, N,ifhasp0,par_P,par_L,par_S
 	nx=par_L['nm'];	#model size
 	nd=par_L['nd'];	#data size
 
-	if opP != 'NULL':
+	if opP  is not None:
 		d=-dat; #nd*1
 		r=opP(d,par_P,0,0);
 	else:
@@ -371,7 +371,7 @@ def conjgrad(opP,opL,opS, p, x, dat, eps_cg, tol_cg, N,ifhasp0,par_P,par_L,par_S
 
 	if ifhasp0:
 		x=op_S(p,par_S,0,0);
-		if opP != 'NULL':
+		if opP  is not None:
 			d=opL(x,par_L,0,0);
 			par_P['d']=r;#initialize data
 			r=opP(d,par_P,0,1);
@@ -392,7 +392,7 @@ def conjgrad(opP,opL,opS, p, x, dat, eps_cg, tol_cg, N,ifhasp0,par_P,par_L,par_S
 		gp=eps_cg*p; #np*1
 		gx=-eps_cg*x; #nx*1
 		
-		if opP !='NULL':
+		if opP is not None:
 			d=opP(r,par_P,1,0);#adjoint
 			par_L['m']=gx;#initialize model
 			gx=opL(d,par_L,1,1);#adjoint,adding
@@ -406,7 +406,7 @@ def conjgrad(opP,opL,opS, p, x, dat, eps_cg, tol_cg, N,ifhasp0,par_P,par_L,par_S
 		gx=opS(gp.copy(),par_S,0,0);#forward,adding
 		#The above gp.copy() instead of gp is the most striking bug that has been found because otherwise gp was modified during the shaping operation (opS) (Mar, 28, 2022)
 		
-		if opP!='NULL':
+		if opP is not None:
 			d=opL(gx,par_P,0,0);#forward
 			gr=opP(d,par_L,0,0);#forward
 		else:
