@@ -72,7 +72,7 @@ def drr3d(D, flow=1, fhigh=124, dt=0.004, N=1, K=1, verb=0):
 	lxx=nx-lx+1;
 	ly=int(np.floor(ny/2)+1);
 	lyy=ny-ly+1;
-	M=np.zeros([lx*ly,lxx*lyy]);
+	M=np.zeros([lx*ly,lxx*lyy],dtype=np.complex_);
 	
 	#main loop
 	for k in range(ilow,ihigh+1):
