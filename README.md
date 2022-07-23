@@ -2,6 +2,12 @@
 ======
 #  [Random noise attenuation using local signal-and-noise orthogonalization](https://www.researchgate.net/publication/270902763_Random_noise_attenuation_using_local_signal-and-noise_orthogonalization)
 
+![GitHub last commit](https://img.shields.io/github/last-commit/chenyk1990/pyortho?style=plastic)
+![Twitter Follow](https://img.shields.io/twitter/follow/chenyk1990?style=social)
+![GitHub followers](https://img.shields.io/github/followers/chenyk1990?style=social)
+![GitHub stars](https://img.shields.io/github/stars/chenyk1990/pyortho?style=social)
+![GitHub forks](https://img.shields.io/github/forks/chenyk1990/pyortho?style=social)
+
 ## Description
 
 **Pyortho** is a python package for local signal-and-noise orthogonalization and local similarity calculation. The local orthogonalization method is a fundamental seismic data analysis algorithm and has a wide range of applications. More examples will be continuously updated. 
