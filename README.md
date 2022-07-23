@@ -1,5 +1,6 @@
 **Pyortho**
 ======
+#  [Random noise attenuation using local signal-and-noise orthogonalization](https://www.researchgate.net/publication/270902763_Random_noise_attenuation_using_local_signal-and-noise_orthogonalization)
 
 ## Description
 
