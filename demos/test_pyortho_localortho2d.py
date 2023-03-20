@@ -79,7 +79,7 @@ print(np.std(dn))
 
 
 
-d1=lo.drr3d(dn,0,120,0.004,3,1);	#DMSSA (when damping factor =1, there are heavy damages)
+d1=lo.drr3d(dn,0,120,0.004,3,1);	#DRR (when damping factor =1, there are heavy damages)
 noi1=dn-d1;
 
 
